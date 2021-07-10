@@ -3,7 +3,7 @@ import firebase from "firebase";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-
+let database;
 const firebaseConfig = {
   apiKey: "AIzaSyA1-ML4JoGkeC0Fe4QnWnGwbV3g3auP0RY",
   authDomain: "usermanage-0210.firebaseapp.com",
@@ -15,10 +15,13 @@ const firebaseConfig = {
   measurementId: "G-12T8XPW5E3"
 }; 
 
-class Fire { 
-  constructor() {
-    this.init = firebase.initializeApp(firebaseConfig);
-    this.database = firebase.database();
+export const fire = () => {
+  if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
   }
+  database = firebase.database()
 }
-export default new Fire();
+
+export const getFireDB = () => {
+  return database.ref('/').once('value')
+}
