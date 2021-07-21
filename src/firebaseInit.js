@@ -25,3 +25,18 @@ export const fire = () => {
 export const getFireDB = () => {
   return database.ref('/').once('value')
 }
+
+export const setFireDB = (userID, value) => {
+  
+  database.ref('users/' + userID).set({
+    value: value,
+  }, (error) => {
+    if (error) {
+      console.log("err!");
+      // The write failed...
+    } else {
+      console.log("Data Save Successfully!");
+      // Data saved successfully!
+    }
+  });
+}
