@@ -29,23 +29,22 @@ export default class App extends React.Component {
                     {
                         Object.keys(users).map((key)=>(
                             (key.indexOf(name) !== -1 && name != '') ? (
-                                <div key={key}>
+                                <div className="click" key={key}>
                                     {/* 이름 중복 찾기 */}
                                     {Object.keys(users[key]).map((n) => (
                                         <div key={'name' + n}>
                                             <Card style={{ width: '18rem' }}>
                                                 <Card.Header>{key}</Card.Header>
-                                                <ListGroup variant="flush">
-                                                    <ListGroup.Item>{users[key][n].phone}</ListGroup.Item>
-                                                    <ListGroup.Item>{users[key][n].point}</ListGroup.Item>
+                                                <ListGroup variant="flush" style={{textAlign: "left"}}>
+                                                    <ListGroup.Item>전화번호 : {users[key][n].phone}</ListGroup.Item>
+                                                    <ListGroup.Item>포인트 : {users[key][n].point}</ListGroup.Item>
                                                     {/* 타임라인 중복 찾기 */}
                                                     {(users[key][n].visit != 0) ? (
-                                                        Object.keys(users[key][n]['timeline']).map((m) => (
-                                                            <>
-                                                                <ListGroup.Item>{users[key][n]['timeline'][m].date}</ListGroup.Item>
-                                                                <ListGroup.Item>{users[key][n]['timeline'][m].msg}</ListGroup.Item>
-                                                            </>
-                                                    ))) : (
+                                                        <>
+                                                            <ListGroup.Item>최근날짜 : {users[key][n]['timeline'][1].date}</ListGroup.Item>
+                                                            <ListGroup.Item>매세지 : {users[key][n]['timeline'][1].msg}</ListGroup.Item>
+                                                        </>
+                                                    ) : (
                                                         <span/>
                                                     )}
                                                 </ListGroup>
