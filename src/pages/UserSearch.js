@@ -1,16 +1,17 @@
-import React from 'react';
+import React, {useState} from 'react';
 import '../css/userSearch.css';
 import { BrowserRouter as Switch, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Users from './Users';
 import firebaseInit, {fire, getFireDB, setFireDB } from '../firebaseInit';
-import { InputGroup, Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card } from 'react-bootstrap';
+import { InputGroup,Button, Offcanvas, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card } from 'react-bootstrap';
 
 class UserSearch extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {isClickToggle: false, value: '', name: '', users: []};
+        this.state = {isClickToggle: false, isOffcanvas: false, value: '', name: '', users: []};
         
+
         fire();
 
         this.handleChange = this.handleChange.bind(this);
@@ -48,7 +49,8 @@ class UserSearch extends React.Component {
             users : res.val().users
         })
 
-        console.log("rendering : " + res.val().users);
+        console.log("rendering");
+        console.log(res.val().users);
         });
     }
     render() {
@@ -69,9 +71,7 @@ class UserSearch extends React.Component {
                             <hr/>
                             <br/>
                             <InputGroup className="mb-3"> 
-                                <InputGroup.Prepend>
                                 <InputGroup.Text id="basic-addon1">성 함</InputGroup.Text>
-                                </InputGroup.Prepend>
                                 <FormControl
                                 value={this.state.name}
                                 onChange={this.handleChange}
@@ -82,9 +82,7 @@ class UserSearch extends React.Component {
                             </InputGroup>
     
                             <InputGroup className="mb-3">
-                                <InputGroup.Prepend>
                                 <InputGroup.Text id="basic-addon1">전화번호</InputGroup.Text>
-                                </InputGroup.Prepend>
                                 <FormControl
                                 placeholder="전화번호"
                                 aria-label="PhoneNumber"
@@ -105,6 +103,8 @@ class UserSearch extends React.Component {
                         </Card.Body>
 
                         <this.Search users={users} isClickToggle={this.state.isClickToggle} name={this.state.name}></this.Search>
+                        {//<this.OffCanvasExample placement='bottom' name='bottom' getstate={this.state}> </this.OffCanvasExample>
+                        }
                         
                     </Card>
                 </div>

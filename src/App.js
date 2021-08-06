@@ -4,6 +4,7 @@ import './App.css';
 import Users from './pages/Users';
 import UserSearch from './pages/UserSearch';
 import UserAdd from './pages/UserAdd';
+import ItemManage from './pages/ItemManage';
 
 import { BrowserRouter as Switch, Route } from "react-router-dom";
 import firebaseInit, {fire, getFireDB, setFireDB } from './firebaseInit';
@@ -17,29 +18,12 @@ import { Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, 
 export default class App extends Component {
   constructor() {
       super();
-      this.state = {
-        users: []
-      };
-      fire();
-  }
-
-  //랜더링을 마친 후
-  componentDidMount() {
-    //setFireDB('tester', 20);
-
-    getFireDB()
-    .then(res =>{
-      this.setState({
-        users : res.val().users
-      })
-
-      console.log("rendering : " + res.val().users);
-    });
+      const meta = document.createElement('meta');
+      meta.name = "viewport";
+      meta.content = "width=device-width, initial-scale=1.5, maximum-scale=1.0, viewport-fit=cover";
+      document.getElementsByTagName('head')[0].appendChild(meta);
   }
   render(){
-    const {
-      users
-    } = this.state;
     
     return (     
         <div>
@@ -47,7 +31,7 @@ export default class App extends Component {
             <Navbar.Brand href="/">HOME</Navbar.Brand>&nbsp;&nbsp;&nbsp;
             <Nav className="mr-auto">
               <Nav.Link href="/userAdd">회원 추가</Nav.Link> &nbsp;&nbsp;&nbsp;
-              <Nav.Link href="#features">물품 관리</Nav.Link>&nbsp;&nbsp;&nbsp;
+              <Nav.Link href="/ItemManage">물품 관리</Nav.Link>&nbsp;&nbsp;&nbsp;
               <Nav.Link href="#pricing">회원순위</Nav.Link>&nbsp;&nbsp;&nbsp;
               <Nav.Link href="#pricing">통계</Nav.Link>
             </Nav>
@@ -58,6 +42,7 @@ export default class App extends Component {
           
           {/* <Route exact path="/second" render={()=><Users users={users}/>}/> */}
           <Route exact path="/userAdd" component={UserAdd}/> 
+          <Route exact path="/ItemManage" component={ItemManage}/> 
         </Switch>
 
         <h1>End</h1>

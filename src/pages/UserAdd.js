@@ -16,9 +16,7 @@ const usersAdd = () => {
                     <hr/>
                     <br/>
                     <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon1">성 함</InputGroup.Text>
-                        </InputGroup.Prepend>
                         <FormControl
                         placeholder="이름"
                         aria-label="Username"
@@ -27,9 +25,7 @@ const usersAdd = () => {
                     </InputGroup>
 
                     <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon1">전화번호</InputGroup.Text>
-                        </InputGroup.Prepend>
                         <FormControl
                         placeholder="전화번호"
                         aria-label="PhoneNumber"
@@ -38,9 +34,7 @@ const usersAdd = () => {
                     </InputGroup>
 
                     <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
                         <InputGroup.Text id="basic-addon1">포인트</InputGroup.Text>
-                        </InputGroup.Prepend>
                         <FormControl
                         placeholder="포인트"
                         aria-label="PhoneNumber"
