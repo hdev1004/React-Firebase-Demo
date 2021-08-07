@@ -26,13 +26,12 @@ export const getFireDB = () => {
   return database.ref('/').once('value')
 }
 
-export const setFireDB = (userID, value) => {
+export const setFireDB = (select, userID, value) => {
   
-  database.ref('users/' + userID).set({
-    value: value,
-  }, (error) => {
+  database.ref(select + '/' + userID).set(value, (error) => {
     if (error) {
       console.log("err!");
+      alert("데이터 저장에 실패했습니다.");
       // The write failed...
     } else {
       console.log("Data Save Successfully!");

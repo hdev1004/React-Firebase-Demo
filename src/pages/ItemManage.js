@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import firebaseInit, {fire, getFireDB, setFireDB } from '../firebaseInit';
-import { Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card, Tabs, Tab } from 'react-bootstrap';
+import { Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card, Tabs, Tab, InputGroup } from 'react-bootstrap';
 import { ReactComponent as Trash } from '../svg/trash.svg';
 
 
@@ -23,6 +23,20 @@ export default class App extends React.Component {
         });
     }
 
+    handleChange = (e) => {
+        setFireDB('items','컷/3/Test', '10');
+        
+        
+        
+        getFireDB()
+        .then(res =>{
+        this.setState({
+            items : res.val().items
+        })});
+
+        console.log(this.state.items);
+       
+    }
     item_list(tit) {
         let listKey;
         let listState;
@@ -50,9 +64,33 @@ export default class App extends React.Component {
                 <div className="card-wrap">
                     <div className="sub-card-item" key={key + "Div"}>
                         <div className="text-wrap-item" key={key + "subDiv"}>
-                            <span>{key}</span>
-                            <span>{Object.keys(listState[key])}</span>
-                            <span>{Object.values(listState[key])}</span>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                name = {key}
+                                onChange={this.handleChange}
+                                placeholder="코드"
+                                aria-label="코드"
+                                aria-describedby="basic-addon1"
+                                defaultValue={key}
+                            />
+                        </InputGroup>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                placeholder="품목"
+                                aria-label="품목"
+                                aria-describedby="basic-addon1"
+                                defaultValue={Object.keys(listState[key])}
+                            />
+                        </InputGroup>
+                        <InputGroup className="mb-3">
+                            <FormControl
+                                placeholder="가격"
+                                aria-label="가격"
+                                aria-describedby="basic-addon1"
+                                defaultValue={Object.values(listState[key])}
+                            />
+                        </InputGroup>   
+                            
                         </div>    
                     </div> 
 
