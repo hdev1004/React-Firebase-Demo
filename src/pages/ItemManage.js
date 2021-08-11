@@ -1,8 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import firebaseInit, {fire, getFireDB, setFireDB } from '../firebaseInit';
+import firebaseInit, {fire, getFireDB, setFireDB, removeFireDB, getFireDB_Select } from '../firebaseInit';
 import { Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card, Tabs, Tab, InputGroup } from 'react-bootstrap';
 import { ReactComponent as Trash } from '../svg/trash.svg';
+import reactDom from 'react-dom';
 
 
 export default class App extends React.Component {
@@ -10,9 +11,102 @@ export default class App extends React.Component {
         super(props);
 
         fire();
-        this.state = {items: []}
+        this.state = {items: [], colum: []}
     }   
-    componentDidMount() {
+
+    makeItem = (tit) => {
+        let item = (
+            <>
+                <div className="sub-card-item">
+                    <div className={"text-wrap-item " + tit}>
+                    <InputGroup className="mb-3">
+                        <FormControl
+                            //name = {tit + '-' + 'a' + '-' + idx + '-' + key}
+                            //onChange={this.handleChange}
+                            placeholder="코드"
+                            aria-label="코드"
+                            aria-describedby="basic-addon1"
+                        />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                        <FormControl
+                            //name = {tit + '-' + 'b' + '-' + idx}
+                            placeholder="품목"
+                            aria-label="품목"
+                            aria-describedby="basic-addon1"
+                        />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                        <FormControl
+                            //name = {tit + '-' + 'c' + '-' + idx}
+                            placeholder="가격"
+                            aria-label="가격"
+                            aria-describedby="basic-addon1"
+                        />
+                    </InputGroup>   
+                        
+                    </div>    
+                </div> 
+
+                <div className="sub-card-item-delete">
+                    <Trash/>
+                </div>
+            </>
+        )
+
+        return item;
+    }
+
+    addItem() {
+        let curTit = document.querySelector("button[aria-selected='true']").textContent;
+        let curTap;
+        if(curTit == "펌") {
+            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m1");
+        } else if(curTit == "컷") {
+            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m2");
+        } else if(curTit == "드라이") {
+            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m3");
+        } else if(curTit == "염색") {
+            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m4");
+        }
+        let putDiv = document.createElement('div');
+        putDiv.className = "card-wrap";
+        putDiv.innerText = "create Box";
+        curTap.prepend(putDiv);
+
+        console.log(curTit + " 추가");
+
+        reactDom.render (
+            this.makeItem(curTit), putDiv
+        )
+        
+    }
+
+    saveObj() {
+        let tits = ["펌", "컷", "드라이", "염색"];
+        let resultObj = {};
+        let tempObj = {};
+        let item;
+        let makeSetObj;
+        let all_items;
+
+        tits.map((tit) => (
+            all_items = document.querySelectorAll("." + tit),
+            all_items.forEach((items)=> (
+                item = items.querySelectorAll("input"),
+                //console.log(item[0].value + ", " + item[1].value + ", " + item[2].value),
+                makeSetObj = {[item[0].value] : {[item[1].value]: item[2].value}},
+                
+                Object.assign(tempObj, makeSetObj)
+                //obj["펌"][item[0].value][item[1].value] = item[2].value
+            )),
+            resultObj[tit] = tempObj,
+            tempObj = {},
+            console.log(resultObj)
+        ));
+
+        setFireDB('items', resultObj);
+
         getFireDB()
         .then(res =>{
         this.setState({
@@ -23,19 +117,16 @@ export default class App extends React.Component {
         });
     }
 
-    handleChange = (e) => {
-        setFireDB('items','컷/3/Test', '10');
-        
-        
-        
+
+    componentDidMount() {
         getFireDB()
         .then(res =>{
         this.setState({
             items : res.val().items
-        })});
+        })
 
-        console.log(this.state.items);
-       
+        console.log("rendering");
+        });
     }
     item_list(tit) {
         let listKey;
@@ -59,15 +150,15 @@ export default class App extends React.Component {
         }
 
         return (
-            listKey.map((key)=>(
+            listKey.map((key, idx)=>(
                 <>
                 <div className="card-wrap">
                     <div className="sub-card-item" key={key + "Div"}>
-                        <div className="text-wrap-item" key={key + "subDiv"}>
+                        <div className={"text-wrap-item " + tit} key={key + "subDiv"}>
                         <InputGroup className="mb-3">
                             <FormControl
-                                name = {key}
-                                onChange={this.handleChange}
+                                //name = {tit + '-' + 'a' + '-' + idx + '-' + key}
+                                //onChange={this.handleChange}
                                 placeholder="코드"
                                 aria-label="코드"
                                 aria-describedby="basic-addon1"
@@ -76,6 +167,7 @@ export default class App extends React.Component {
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <FormControl
+                                //name = {tit + '-' + 'b' + '-' + idx}
                                 placeholder="품목"
                                 aria-label="품목"
                                 aria-describedby="basic-addon1"
@@ -84,6 +176,7 @@ export default class App extends React.Component {
                         </InputGroup>
                         <InputGroup className="mb-3">
                             <FormControl
+                                //name = {tit + '-' + 'c' + '-' + idx}
                                 placeholder="가격"
                                 aria-label="가격"
                                 aria-describedby="basic-addon1"
@@ -110,7 +203,9 @@ export default class App extends React.Component {
         if(Object.keys(this.state.items).length) {
             return (
                 <>
-                    <div className="menu-item">
+                    <div className="menu-item" style={{textAlign: "center"}}>
+                        <Button variant="success" style={{width: "100px"}} onClick={() => this.saveObj()}>저장</Button>{' '}
+                        <Button variant="secondary" style={{width: "100px"}} onClick={() => this.addItem()}>추가</Button>{' '}<hr></hr>
                         <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3" defaultActiveKey="m1">
                             <Tab eventKey="m1" title="펌">
                                 {this.item_list("펌")}
