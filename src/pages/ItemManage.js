@@ -4,14 +4,15 @@ import firebaseInit, {fire, getFireDB, setFireDB, removeFireDB, getFireDB_Select
 import { Button, ButtonToolbar, Alert, Navbar, Nav, Form, FormControl, Spinner, Card, Tabs, Tab, InputGroup } from 'react-bootstrap';
 import { ReactComponent as Trash } from '../svg/trash.svg';
 import reactDom from 'react-dom';
-
+import { hot } from 'react-hot-loader';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
 
         fire();
-        this.state = {items: [], colum: []}
+        this.state = {items: [], colum: [], defaultActiveKey: '펌'}
+       
     }   
 
     makeItem = (tit) => {
@@ -60,15 +61,10 @@ export default class App extends React.Component {
     addItem() {
         let curTit = document.querySelector("button[aria-selected='true']").textContent;
         let curTap;
-        if(curTit == "펌") {
-            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m1");
-        } else if(curTit == "컷") {
-            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m2");
-        } else if(curTit == "드라이") {
-            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m3");
-        } else if(curTit == "염색") {
-            curTap = document.querySelector("#uncontrolled-tab-example-tabpane-m4");
-        }
+
+        curTap = document.querySelector("#uncontrolled-tab-example-tabpane-" + curTit);
+        
+        console.log(curTap);
         let putDiv = document.createElement('div');
         putDiv.className = "card-wrap";
         putDiv.innerText = "create Box";
@@ -81,15 +77,15 @@ export default class App extends React.Component {
         )
         
     }
-
     saveObj() {
         let tits = ["펌", "컷", "드라이", "염색"];
+        let curTit = document.querySelector("button[aria-selected='true']").textContent;
         let resultObj = {};
         let tempObj = {};
         let item;
         let makeSetObj;
         let all_items;
-
+        const { history } = this.props;
         tits.map((tit) => (
             all_items = document.querySelectorAll("." + tit),
             all_items.forEach((items)=> (
@@ -104,16 +100,12 @@ export default class App extends React.Component {
             tempObj = {},
             console.log(resultObj)
         ));
+        setFireDB('items', resultObj)
+        .then(() => {
+            history.push('/ItemManage1');
+            history.push('/ItemManage', {defaultActiveKey : curTit});
+            
 
-        setFireDB('items', resultObj);
-
-        getFireDB()
-        .then(res =>{
-        this.setState({
-            items : res.val().items
-        })
-
-        console.log("rendering");
         });
     }
 
@@ -129,24 +121,12 @@ export default class App extends React.Component {
         });
     }
     item_list(tit) {
-        let listKey;
-        let listState;
+        let listKey = [];
+        let listState = [];
 
-        if(tit == "펌") {
-            listKey = Object.keys(this.state.items.펌);
-            listState = this.state.items.펌;
-        }
-        else if(tit == "컷") {
-            listKey = Object.keys(this.state.items.컷);
-            listState = this.state.items.컷;
-        }
-        else if(tit == "드라이") {
-            listKey = Object.keys(this.state.items.드라이);
-            listState = this.state.items.드라이;
-        }
-        else if(tit == "염색") {
-            listKey = Object.keys(this.state.items.염색);
-            listState = this.state.items.염색;
+        if(this.state.items[tit]) {
+            listKey = Object.keys(this.state.items[tit]);
+            listState = this.state.items[tit];
         }
 
         return (
@@ -187,7 +167,7 @@ export default class App extends React.Component {
                         </div>    
                     </div> 
 
-                    <div className="sub-card-item-delete">
+                    <div className={"sub-card-item-delete"} id={tit + "-" + idx} onClick={() => this.getClick(tit, idx)}>
                         <Trash/>
                     </div>
                 </div>
@@ -199,6 +179,24 @@ export default class App extends React.Component {
         
     }
 
+ 
+    getClick(tit, idx) {
+        let trash = document.querySelector("#" + tit + "-" + idx);
+        let parent = trash.parentElement;
+        let mid = parent.querySelector("." +tit);
+
+        mid.className = "text-wrap-item";
+        parent.style.display = "none";
+    }
+
+    get_defaultActiveKey() {
+        if(this.props.location.state) {
+            return this.props.location.state.defaultActiveKey;
+        } else {
+            return '펌';
+        }
+    }
+
     render() {
         if(Object.keys(this.state.items).length) {
             return (
@@ -206,17 +204,17 @@ export default class App extends React.Component {
                     <div className="menu-item" style={{textAlign: "center"}}>
                         <Button variant="success" style={{width: "100px"}} onClick={() => this.saveObj()}>저장</Button>{' '}
                         <Button variant="secondary" style={{width: "100px"}} onClick={() => this.addItem()}>추가</Button>{' '}<hr></hr>
-                        <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3" defaultActiveKey="m1">
-                            <Tab eventKey="m1" title="펌">
+                        <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example" className="mb-3" defaultActiveKey={() => this.get_defaultActiveKey()}>
+                            <Tab eventKey="펌" title="펌">
                                 {this.item_list("펌")}
                             </Tab>
-                            <Tab eventKey="m2" title="컷">
+                            <Tab eventKey="컷" title="컷">
                                 {this.item_list("컷")}  
                             </Tab>
-                            <Tab eventKey="m3" title="드라이">
+                            <Tab eventKey="드라이" title="드라이">
                                 {this.item_list("드라이")}
                             </Tab>
-                            <Tab eventKey="m4" title="염색">
+                            <Tab eventKey="염색" title="염색">
                                 {this.item_list("염색")}
                             </Tab>
                             
@@ -234,3 +232,4 @@ export default class App extends React.Component {
         }
     }
 }
+

@@ -33,7 +33,7 @@ export const getFireDB_Select = (value) => {
 
 export const setFireDB = (userID, value) => {
   
-  database.ref('/' + userID).set(value, (error) => {
+  return database.ref('/' + userID).set(value, (error) => {
     if (error) {
       console.log("err!");
       alert("데이터 저장에 실패했습니다.");
@@ -47,7 +47,7 @@ export const setFireDB = (userID, value) => {
 }
 
 export const removeFireDB = (select, userID) => {
-  database.ref('/' + userID).remove((error) => {
+  return database.ref('/' + userID).remove((error) => {
     if(error) {
       console.log("update err");
       alert("데이터 삭제에 실패했습니다.");
